@@ -1,0 +1,28 @@
+Instalar git:
+	sudo apt update
+	sudo apt install git
+	git --version
+	git config --global user.name "Roberto"
+	git config --global user.email "roberto.orellana.t@usach.cl"
+	
+Instalar Docker y Docker Compose:
+	sudo apt update && sudo apt upgrade -y
+	sudo apt install apt-transport-https ca-certificates curl software-properties-common
+	curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+	sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+	sudo apt update
+	sudo apt install -y docker-ce docker-ce-cli containerd.io
+	sudo apt install -y docker-compose
+	sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+	sudo chmod +x /usr/local/bin/docker-compose
+
+	docker --version
+	docker-compose --version
+
+	sudo groupadd docker
+	sudo usermod -aG docker $USER
+	newgrp docker
+
+
+python manage.py -h [HOST] -p [PUERTO] runserver
+Correr docker compose: docker-compose up --build -d

@@ -1,0 +1,17 @@
+#version: '3.8'
+services:
+  backend:
+    build:
+      context: ./docker
+    ports:
+      - "5000:5000"
+    expose:
+      - "5000"
+    links:
+      - redis:redis
+    depends_on:
+      - redis
+    volumes:
+      - .:/app
+  redis:
+    image: redis

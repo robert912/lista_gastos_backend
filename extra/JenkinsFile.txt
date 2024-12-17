@@ -1,0 +1,91 @@
+pipeline {
+    agent any
+    parameters {
+        string(name: 'BRANCH', defaultValue: 'master', description: 'Branch del repositorio')
+        choice(name: 'ENVIRONMENT', choices: ['development', 'testing', 'production'], description: 'Entorno de despliegue')
+    }
+    environment {
+        REPO_URL = 'https://github.com/robert912/New_backend_python_base.git'
+        APP_DIR = "${WORKSPACE}\\New_backend_python_base"
+    }
+    stages {
+        stage('Validar entorno') {
+            steps {
+                script {
+                    bat 'git --version'
+                    bat 'docker --version'
+                    bat 'docker-compose --version'
+                }
+            }
+        }
+        stage('Limpiar Workspace') {
+            steps {
+                cleanWs()
+            }
+        }
+        stage('Clonar código') {
+            steps {
+                bat "git clone -b ${params.BRANCH} ${REPO_URL}"
+            }
+        }
+        stage('Configurar entorno') {
+            steps {
+                script {
+                    dir(APP_DIR) {
+                        bat """
+                            echo env = '${params.ENVIRONMENT}' > aplicacion/enviroment.py
+                        """
+                    }
+                }
+            }
+        }
+        stage('Construir y levantar servicios') {
+            steps {
+                script {
+                    dir(APP_DIR) {
+                        bat 'docker-compose up --build -d'
+                    }
+                }
+            }
+        }
+        stage('Esperar antes de prueba de API') {
+            steps {
+                script {
+                    timeout(time: 60, unit: 'SECONDS') {
+                        retry(20) {
+                            bat 'curl --fail http://localhost:5000/prueba'
+                        }
+                    }
+                }
+            }
+        }
+        stage('Ejecutar pruebas unitarias') {
+            steps {
+                script {
+                    dir(APP_DIR) {
+                        bat 'docker-compose exec backend pytest -v tests/'
+                    }
+                }
+            }
+        }
+        /*stage('Apagar servicios') {
+            steps {
+                dir(APP_DIR) {
+                    bat 'docker-compose down --volumes --remove-orphans'
+                }
+            }
+        }*/
+    }
+    post {
+        always {
+            /*cleanWs()*/
+            echo 'Pipeline completado.'
+        }
+        success {
+            echo 'Pipeline ejecutado con éxito.'
+        }
+        failure {
+            echo 'Pipeline fallido. Revisa los logs.'
+        }
+    }
+}

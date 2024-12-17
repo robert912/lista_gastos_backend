@@ -1,0 +1,16 @@
+Flask==1.1.4
+Flask-Script
+Flask-SQLAlchemy==2.5.1
+SQLAlchemy==1.4.46
+Flask-Restful
+pymysql
+Flask-inputs
+flask-redis
+flask_cors
+openpyxl
+markupsafe==2.0.1
+python-dateutil
+WeasyPrint==52.5
+requests
+pytest
+google-auth
