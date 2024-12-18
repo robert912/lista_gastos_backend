@@ -81,7 +81,14 @@ class LoginGoogle(Resource):
                 Usuario.insert_data(idinfo)
                 user = Usuario.get_by_usuario(email)
             tokenId = Sesion.generar_tokenid(user[0]['usuario'], user[0]['google_id'], 'Admin')
-            return {'success': True, 'message': 'Bienvenido', "access_token": tokenId, "data":user[0]}, 200
+            data = {
+                'id':user[0]['id'],
+                'nombre':user[0]['nombre'],
+                'usuario':user[0]['usuario'],
+                'google_id':user[0]['google_id'],
+                'avatar':user[0]['avatar'],
+            }
+            return {'success': True, 'message': 'Bienvenido', "access_token": tokenId, "data":data}, 200
         except ValueError:
             return {'success': False, 'message': "Token inválido", 'data':[] }, 400
         except Exception as e:

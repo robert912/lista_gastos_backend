@@ -31,9 +31,7 @@ api = Api(app)
 
 @app.before_request
 def verifica_token():
-    #return jsonify({'message': 'Acceso denegado', 'endPoint':request.endpoint})
-    if request.method != 'OPTIONS' and request.endpoint not in ['login', 'callback', 'prueba']:
-        return jsonify({'message': request.endpoint})
+    if request.method != 'OPTIONS' and request.endpoint not in ['login', 'logingoogle', 'prueba']:
         if not request.headers.get('Authorization'):
             return jsonify({'message': 'Acceso denegado'}), 403
         else:
@@ -44,7 +42,7 @@ def verifica_token():
 
 api.add_resource(Prueba, '/prueba')
 api.add_resource(Login, '/login', '/login/validar')
-api.add_resource(LoginGoogle, '/callback')
+api.add_resource(LoginGoogle, '/login/google')
 api.add_resource(LogoutResource, '/logout/system')
 api.add_resource(PersonaResource, '/getpersona')
 api.add_resource(PersonaIdentificacion, '/personabyrut')
