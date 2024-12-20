@@ -18,7 +18,7 @@ class Login(Resource):
             user = Usuario.get_by_usuario(data['usuario'])
             passw = Usuario.getHash(data['password'])
             if user and 'password_hash' in user[0] and user[0]['password_hash'] == passw:
-                tokenId = Sesion.generar_tokenid(user[0]['usuario'], user[0]['password_hash'], 'Admin')
+                tokenId = Sesion.generar_tokenid(user[0]['usuario'], user[0]['password_hash'], user[0]['id'])
                 return {'success': True, 'message': 'Bienvenido', "access_token": tokenId}, 200
             return {'success': False, 'message': 'Usuario o contraseña incorrectos'}, 200
         except Exception as e:
@@ -80,7 +80,7 @@ class LoginGoogle(Resource):
             if not user:
                 Usuario.insert_data(idinfo)
                 user = Usuario.get_by_usuario(email)
-            tokenId = Sesion.generar_tokenid(user[0]['usuario'], user[0]['google_id'], 'Admin')
+            tokenId = Sesion.generar_tokenid(user[0]['usuario'], user[0]['google_id'], user[0]['id'])
             data = {
                 'id':user[0]['id'],
                 'nombre':user[0]['nombre'],

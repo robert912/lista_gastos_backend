@@ -112,3 +112,26 @@ class GastoMensualResource(Resource):
             msj = 'Error: '+ str(exc_obj) + ' File: ' + fname +' linea: '+ str(exc_tb.tb_lineno)
             return {'mensaje': str(msj) }, 500
         
+class GastoDelMes(Resource):
+    def get(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('id_usuario', type=int, required=True, help="Debe indicar la id_usuario")
+        data = parser.parse_args()
+        try:
+            if data["id_usuario"]:
+                data["mes"] = datetime.now().month
+                data["anio"] = datetime.now().year
+                gasto_mensual = GastoMensual.get_data_mes(data)
+                if gasto_mensual:
+                    return {'success': True, 'message': 'GastoMensual enocontrada', 'data': gasto_mensual}, 200
+                else:
+                    mensual = GastoMensual.insert_data(data)
+                    if mensual:
+                        gasto_mensual = GastoMensual.get_data_mes(data)
+                        return {'success': True, 'message': "Gasto mensual enocontrada.", 'data': gasto_mensual}, 200
+            return {'success': False, 'message': "Faltan parámetros requeridos. Acceso denegado.", 'data':[]}, 200
+        except Exception as e:
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            msj = 'Error: '+ str(exc_obj) + ' File: ' + fname +' linea: '+ str(exc_tb.tb_lineno)
+            return {'mensaje': str(msj) }, 500

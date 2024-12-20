@@ -13,6 +13,8 @@ from aplicacion.modelos import *
 
 from tests.app_tests import Prueba
 from aplicacion.helpers.sesion import Sesion
+from aplicacion.recursos.Gasto import GastoPorMes, GastoResource
+from aplicacion.recursos.GastoMensual import GastoUsuario, GastoMensualResource, GastoDelMes
 from aplicacion.recursos.login import Login, LogoutResource, LoginGoogle
 from aplicacion.recursos.Persona import PersonaResource, PersonaIdentificacion
 from aplicacion.recursos.PdfGenerator import GeneratePdf
@@ -31,7 +33,7 @@ api = Api(app)
 
 @app.before_request
 def verifica_token():
-    if request.method != 'OPTIONS' and request.endpoint not in ['login', 'logingoogle', 'prueba']:
+    if request.method != 'OPTIONS' and request.endpoint not in ['login', 'logingoogle', 'prueba','gastodelmes']:
         if not request.headers.get('Authorization'):
             return jsonify({'message': 'Acceso denegado'}), 403
         else:
@@ -40,12 +42,13 @@ def verifica_token():
                 return jsonify({'message' :'Acceso denegado'}),403
 
 
-api.add_resource(Prueba, '/prueba')
+api.add_resource(GeneratePdf,'/generate_pdf')
+api.add_resource(GastoDelMes,'/gastodelmes/obtener')
 api.add_resource(Login, '/login', '/login/validar')
 api.add_resource(LoginGoogle, '/login/google')
 api.add_resource(LogoutResource, '/logout/system')
 api.add_resource(PersonaResource, '/getpersona')
 api.add_resource(PersonaIdentificacion, '/personabyrut')
-api.add_resource(GeneratePdf,'/generate_pdf')
+api.add_resource(Prueba, '/prueba')
 
 app.run(host='0.0.0.0', port=5000)

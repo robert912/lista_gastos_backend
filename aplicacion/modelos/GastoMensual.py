@@ -37,6 +37,19 @@ class GastoMensual(db.Model):
     def get_by_usuario(cls, id_usuario):
         query = cls.query.filter_by(id_usuario=id_usuario).all()
         return Utilidades.obtener_datos(query)
+    
+    @classmethod
+    def get_data_mes(cls, data):
+        mes, anio, id_usuario = data['mes'], data['anio'], data['id_usuario']
+        query = (
+            cls.query
+            .filter(cls.estado == 1)
+            .filter(cls.anio == anio)
+            .filter(cls.mes == mes)
+            .filter(cls.id_usuario == id_usuario)
+            .all()
+        )
+        return Utilidades.obtener_datos(query)
 
     @classmethod
     def insert_data(cls, dataJson):
@@ -88,3 +101,31 @@ class GastoMensual(db.Model):
     def eliminar(self):
         db.session.delete(self)
         db.session.commit()
+
+
+
+
+"""
+    @classmethod
+    def get_data_all_filter(cls, data):
+        query =  cls.query.filter_by(estado=1)
+        count = cls.query.filter_by(estado=1)
+        if 'empresa' in data and data['empresa'] is not None:
+            query = query.filter(func.lower(cls.empresa).like(f"%{data['empresa'].lower()}%"))
+            count = query.filter(func.lower(cls.empresa).like(f"%{data['empresa'].lower()}%"))
+        if 'cliente' in data and data['cliente'] is not None:
+            query = query.filter(func.lower(cls.cliente).like(f"%{data['cliente'].lower()}%"))
+            count = query.filter(func.lower(cls.cliente).like(f"%{data['cliente'].lower()}%"))
+        if 'numero_cotizacion' in data and data['numero_cotizacion'] is not None:
+            query = query.filter(func.lower(cls.numero_cotizacion).like(f"%{data['numero_cotizacion'].lower()}%"))
+            count = query.filter(func.lower(cls.numero_cotizacion).like(f"%{data['numero_cotizacion'].lower()}%"))
+        if 'institucion' in data and data['institucion'] is not None:
+            query = query.filter_by(institucion=data['institucion'])
+            count = count.filter_by(institucion=data['institucion'])
+        query = query.order_by(cls.id.desc())
+        if 'limit' in data and data['limit'] is not None and 'offset' in data and data['offset'] is not None:
+            query = query.limit(data['limit']).offset(data['offset'])
+        count_rows = count.count()
+        query = query.all()
+        return Utilidades.obtener_datos(query), count_rows
+"""
