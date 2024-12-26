@@ -19,7 +19,7 @@ class Login(Resource):
             passw = Usuario.getHash(data['password'])
             if user and 'password_hash' in user[0] and user[0]['password_hash'] == passw:
                 tokenId = Sesion.generar_tokenid(user[0]['usuario'], user[0]['password_hash'], user[0]['id'])
-                return {'success': True, 'message': 'Bienvenido', "access_token": tokenId}, 200
+                return {'success': True, 'message': 'Bienvenido', "access_token": tokenId, 'idUser':user[0]['id']}, 200
             return {'success': False, 'message': 'Usuario o contraseña incorrectos'}, 200
         except Exception as e:
             exc_type, exc_obj, exc_tb = sys.exc_info()

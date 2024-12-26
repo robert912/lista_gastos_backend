@@ -33,13 +33,14 @@ api = Api(app)
 
 @app.before_request
 def verifica_token():
-    if request.method != 'OPTIONS' and request.endpoint not in ['login', 'logingoogle', 'prueba','gastodelmes']:
+    if request.method != 'OPTIONS' and request.endpoint not in ['login', 'logingoogle', 'prueba']:
         if not request.headers.get('Authorization'):
             return jsonify({'message': 'Acceso denegado'}), 403
         else:
-            es_valido = Sesion.validar_token(request.headers.get('Authorization'))
-            if es_valido == False:
-                return jsonify({'message' :'Acceso denegado'}),403
+            resultado = Sesion.validar_token(request.headers.get('Authorization'), request.headers.get('idUsuario'))
+            es_valido = resultado.get("es_valido")
+            if not es_valido:
+                return jsonify({'message' :'Acceso denegado'}), 403
 
 
 api.add_resource(GeneratePdf,'/generate_pdf')

@@ -3,6 +3,7 @@ from datetime import datetime
 from flask import jsonify
 from flask_restful import Resource, reqparse
 from aplicacion.modelos.GastoMensual import GastoMensual
+from aplicacion.modelos.Gasto import Gasto
 
 class GastoUsuario(Resource):
     def get(self):
@@ -122,13 +123,13 @@ class GastoDelMes(Resource):
                 data["mes"] = datetime.now().month
                 data["anio"] = datetime.now().year
                 gasto_mensual = GastoMensual.get_data_mes(data)
-                if gasto_mensual:
-                    return {'success': True, 'message': 'GastoMensual enocontrada', 'data': gasto_mensual}, 200
-                else:
+                if not gasto_mensual:
                     mensual = GastoMensual.insert_data(data)
                     if mensual:
                         gasto_mensual = GastoMensual.get_data_mes(data)
-                        return {'success': True, 'message': "Gasto mensual enocontrada.", 'data': gasto_mensual}, 200
+                lista_gasto = Gasto.get_by_gasto_mensual(gasto_mensual[0]['id'])
+                gasto_mensual[0]['lista_gasto'] = lista_gasto
+                return {'success': True, 'message': "Gasto mensual enocontrada.", 'data': gasto_mensual}, 200
             return {'success': False, 'message': "Faltan parámetros requeridos. Acceso denegado.", 'data':[]}, 200
         except Exception as e:
             exc_type, exc_obj, exc_tb = sys.exc_info()

@@ -12,12 +12,12 @@ from aplicacion.modelos.Persona import Persona
 class Sesion():
 
     @staticmethod
-    def generar_tokenid(username, password, perfil):
+    def generar_tokenid(username, password, id):
         try:
             fecha_actual = datetime.now()
             base = username+password+str(fecha_actual.minute)+str(fecha_actual.second)
             token_id = hashlib.md5(base.encode()).hexdigest()
-            data = {"username":username,"perfil":perfil}
+            data = {"username":username,"id_user":id}
             redis.setex(token_id, 3600, json.dumps(data))
             value = redis.get(token_id)
             if value:
@@ -41,7 +41,11 @@ class Sesion():
 
 
     @staticmethod
-    def validar_token(token_id):
+    def validar_token(token_id, usuario_id):
         existe = redis.exists(token_id)
-        data = redis.get(token_id)
-        return {"es_valido":existe, "data":json.loads(data)}
+        data_decoded = {}
+        if existe and usuario_id:
+            data = redis.get(token_id)
+            data_decoded = json.loads(data)
+            existe = data_decoded.get("id_user") == int(usuario_id)
+        return {"es_valido":existe, "data":data_decoded}
