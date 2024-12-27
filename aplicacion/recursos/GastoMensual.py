@@ -1,5 +1,5 @@
 import sys, os, datetime
-from datetime import datetime
+from datetime import datetime, timedelta
 from flask import jsonify
 from flask_restful import Resource, reqparse
 from aplicacion.modelos.GastoMensual import GastoMensual
@@ -127,9 +127,33 @@ class GastoDelMes(Resource):
                     mensual = GastoMensual.insert_data(data)
                     if mensual:
                         gasto_mensual = GastoMensual.get_data_mes(data)
+
+                        fecha_actual = datetime.now()
+                        mes_anterior = (fecha_actual.replace(day=1) - timedelta(days=1)).month
+                        anio_mes_anterior = (fecha_actual.replace(day=1) - timedelta(days=1)).year
+                        data_mes_anterior ={
+                            'id_usuario':data["id_usuario"],
+                            'mes':mes_anterior,
+                            'anio':anio_mes_anterior
+                        }
+                        gasto_mensual_anterior = GastoMensual.get_data_mes(data_mes_anterior)
+                        lista_gasto_anterior = Gasto.get_by_gasto_mensual(gasto_mensual_anterior[0]['id'])
+
+                        for item in lista_gasto_anterior:
+                            nuevo_item = {
+                                "id_gasto_mensual": gasto_mensual[0]['id'],
+                                "descripcion": item["descripcion"],
+                                "monto": item["monto"],
+                                "categoria": item["categoria"],
+                                "pagado": 0,
+                                "fecha_vencimiento": item["fecha_vencimiento"],
+                                "estado": item["estado"]
+                            }
+                            Gasto.insert_data(nuevo_item)
+
                 lista_gasto = Gasto.get_by_gasto_mensual(gasto_mensual[0]['id'])
                 gasto_mensual[0]['lista_gasto'] = lista_gasto
-                return {'success': True, 'message': "Gasto mensual enocontrada.", 'data': gasto_mensual}, 200
+                return {'success': True, 'message': "Gasto mensual enocontrada.", 'data': gasto_mensual[0]}, 200
             return {'success': False, 'message': "Faltan parámetros requeridos. Acceso denegado.", 'data':[]}, 200
         except Exception as e:
             exc_type, exc_obj, exc_tb = sys.exc_info()

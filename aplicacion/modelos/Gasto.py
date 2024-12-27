@@ -36,7 +36,7 @@ class Gasto(db.Model):
 
     @classmethod
     def get_by_gasto_mensual(cls, id_gasto_mensual):
-        query = cls.query.filter_by(id_gasto_mensual=id_gasto_mensual).all()
+        query = cls.query.filter_by(id_gasto_mensual=id_gasto_mensual).filter_by(estado = 1).all()
         return Utilidades.obtener_datos(query)
 
     @classmethod

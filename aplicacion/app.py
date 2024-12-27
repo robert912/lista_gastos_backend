@@ -45,6 +45,7 @@ def verifica_token():
 
 api.add_resource(GeneratePdf,'/generate_pdf')
 api.add_resource(GastoDelMes,'/gastodelmes/obtener')
+api.add_resource(GastoResource,'/gasto/pagado', '/gasto/agregar', '/gasto/editar', '/gasto/eliminar')
 api.add_resource(Login, '/login', '/login/validar')
 api.add_resource(LoginGoogle, '/login/google')
 api.add_resource(LogoutResource, '/logout/system')
