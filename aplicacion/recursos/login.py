@@ -19,7 +19,14 @@ class Login(Resource):
             passw = Usuario.getHash(data['password'])
             if user and 'password_hash' in user[0] and user[0]['password_hash'] == passw:
                 tokenId = Sesion.generar_tokenid(user[0]['usuario'], user[0]['password_hash'], user[0]['id'])
-                return {'success': True, 'message': 'Bienvenido', "access_token": tokenId, 'idUser':user[0]['id']}, 200
+                data = {
+                    'id':user[0]['id'],
+                    'nombre':user[0]['nombre'],
+                    'usuario':user[0]['usuario'],
+                    'google_id':user[0]['google_id'],
+                    'avatar':user[0]['avatar'],
+                }
+                return {'success': True, 'message': 'Bienvenido', "access_token": tokenId, 'data':user[0]['id']}, 200
             return {'success': False, 'message': 'Usuario o contraseña incorrectos'}, 200
         except Exception as e:
             exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -71,7 +78,7 @@ class LoginGoogle(Resource):
     def post(self):
         try:
             token = request.json.get("credential")
-            CLIENT_ID = "1012040646527-eehun94ltjsmt0tolmjp31qvgaibe67l.apps.googleusercontent.com"
+            CLIENT_ID = "455558882520-mbkd8jsjj3ea5geo0n939khg38m4m2bd.apps.googleusercontent.com"
             if not token:
                 return {'success': False, 'message': "Token no recibido", 'data':[] }, 400
             idinfo = id_token.verify_oauth2_token(token, requests.Request(), CLIENT_ID)

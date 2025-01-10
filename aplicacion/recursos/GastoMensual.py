@@ -137,19 +137,20 @@ class GastoDelMes(Resource):
                             'anio':anio_mes_anterior
                         }
                         gasto_mensual_anterior = GastoMensual.get_data_mes(data_mes_anterior)
-                        lista_gasto_anterior = Gasto.get_by_gasto_mensual(gasto_mensual_anterior[0]['id'])
+                        if gasto_mensual_anterior:
+                            lista_gasto_anterior = Gasto.get_by_gasto_mensual(gasto_mensual_anterior[0]['id'])
 
-                        for item in lista_gasto_anterior:
-                            nuevo_item = {
-                                "id_gasto_mensual": gasto_mensual[0]['id'],
-                                "descripcion": item["descripcion"],
-                                "monto": item["monto"],
-                                "categoria": item["categoria"],
-                                "pagado": 0,
-                                "fecha_vencimiento": item["fecha_vencimiento"],
-                                "estado": item["estado"]
-                            }
-                            Gasto.insert_data(nuevo_item)
+                            for item in lista_gasto_anterior:
+                                nuevo_item = {
+                                    "id_gasto_mensual": gasto_mensual[0]['id'],
+                                    "descripcion": item["descripcion"],
+                                    "monto": item["monto"],
+                                    "categoria": item["categoria"],
+                                    "pagado": 0,
+                                    "fecha_vencimiento": item["fecha_vencimiento"],
+                                    "estado": item["estado"]
+                                }
+                                Gasto.insert_data(nuevo_item)
 
                 lista_gasto = Gasto.get_by_gasto_mensual(gasto_mensual[0]['id'])
                 gasto_mensual[0]['lista_gasto'] = lista_gasto
