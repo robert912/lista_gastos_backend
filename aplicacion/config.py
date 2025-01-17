@@ -18,7 +18,7 @@ class TestingConfig(Config):
     """
     Testing configurations
     """
-    SQLALCHEMY_DATABASE_URI = "mysql+pymysql://admin:12345678@curso-devops.cxuiediqujvr.us-west-2.rds.amazonaws.com:3306/proyecto_devops"
+    SQLALCHEMY_DATABASE_URI = "mysql+pymysql://cideadmin:C1d3.u54ch@cide-usach.c3oquc2k6nsz.us-west-2.rds.amazonaws.com:3306/lista_gastos"
     SQLALCHEMY_POOL_RECYCLE = 300
     TESTING = True 
     DEBUG = True
