@@ -26,7 +26,7 @@ class Login(Resource):
                     'google_id':user[0]['google_id'],
                     'avatar':user[0]['avatar'],
                 }
-                return {'success': True, 'message': 'Bienvenido', "access_token": tokenId, 'data':user[0]['id']}, 200
+                return {'success': True, 'message': 'Bienvenido', "access_token": tokenId, 'data':data}, 200
             return {'success': False, 'message': 'Usuario o contraseña incorrectos'}, 200
         except Exception as e:
             exc_type, exc_obj, exc_tb = sys.exc_info()

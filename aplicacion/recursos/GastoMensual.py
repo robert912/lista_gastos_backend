@@ -5,7 +5,7 @@ from flask_restful import Resource, reqparse
 from aplicacion.modelos.GastoMensual import GastoMensual
 from aplicacion.modelos.Gasto import Gasto
 
-class GastoUsuario(Resource):
+class GastoMensualUsuario(Resource):
     def get(self):
         parser = reqparse.RequestParser()
         parser.add_argument('id_usuario', type=str, required=True, help="Debe indicar la id_usuario")
@@ -53,7 +53,7 @@ class GastoMensualResource(Resource):
     def post(self):
         parser = reqparse.RequestParser()
         parser.add_argument('id_usuario', type=str, required=True, help="Debe indicar el id_usuario")
-        parser.add_argument('total_gastos', type=str, required=True, help="Debe indicar total_gastos")
+        parser.add_argument('gasto_total', type=str, required=True, help="Debe indicar total_gastos")
 
         data = parser.parse_args()
         try:
@@ -80,7 +80,9 @@ class GastoMensualResource(Resource):
         parser.add_argument('id_usuario', type=str, required=False, help="La id_usuario es requerida")
         parser.add_argument('mes', type=str, required=False, help="El mes es requerido")
         parser.add_argument('anio', type=str, required=False, help="El anio es requerido")
-        parser.add_argument('total_gastos', type=str, required=False, help="El total_gastos es requerido")
+        parser.add_argument('gasto_pagado', type=str, required=False, help="El gastos pagado es requerido")
+        parser.add_argument('gasto_pendiente', type=str, required=False, help="El gastos pendiente es requerido")
+        parser.add_argument('gasto_total', type=str, required=False, help="El total_gastos es requerido")
         parser.add_argument('estado', type=str, required=False, help="El estado es requerida")
         data = parser.parse_args()
 
@@ -88,7 +90,7 @@ class GastoMensualResource(Resource):
             gasto_mensual = GastoMensual.update_data(data['id'], data)
             if not gasto_mensual:
                  return {'success': False, 'message': "GastoMensual no encontrada.", 'data': []}, 200
-            return {'success': True, 'message': 'GastoMensual actualizada exitosamente', 'data': person}, 200
+            return {'success': True, 'message': 'GastoMensual actualizada exitosamente', 'data': gasto_mensual}, 200
         
         except Exception as e:
             exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -117,12 +119,13 @@ class GastoDelMes(Resource):
     def get(self):
         parser = reqparse.RequestParser()
         parser.add_argument('id_usuario', type=int, required=True, help="Debe indicar la id_usuario")
+        parser.add_argument('id', type=int, required=False, help="Debe indicar la id del mes")
         data = parser.parse_args()
         try:
             if data["id_usuario"]:
                 data["mes"] = datetime.now().month
                 data["anio"] = datetime.now().year
-                gasto_mensual = GastoMensual.get_data_mes(data)
+                gasto_mensual = GastoMensual.get_data(data["id"]) if data["id"] else GastoMensual.get_data_mes(data)
                 if not gasto_mensual:
                     mensual = GastoMensual.insert_data(data)
                     if mensual:

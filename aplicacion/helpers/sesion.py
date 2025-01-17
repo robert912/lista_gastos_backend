@@ -2,12 +2,9 @@
 # -*- coding: utf-8 -*-
 import sys, os, json
 from aplicacion.db import db
-from sqlalchemy import text
-import random
 import hashlib
 from datetime import datetime
 from aplicacion.redis import redis
-from aplicacion.modelos.Persona import Persona
 
 class Sesion():
 
@@ -18,7 +15,7 @@ class Sesion():
             base = username+password+str(fecha_actual.minute)+str(fecha_actual.second)
             token_id = hashlib.md5(base.encode()).hexdigest()
             data = {"username":username,"id_user":id}
-            redis.setex(token_id, 3600, json.dumps(data))
+            redis.setex(token_id, 3600, json.dumps(data))#86400 -> 24H
             value = redis.get(token_id)
             if value:
                 return token_id
@@ -27,6 +24,16 @@ class Sesion():
         except Exception as e:
             return None
 
+    @staticmethod
+    def renovar_token(token_id, tiempo_para_expirar=3600):
+        try:
+            if redis.exists(token_id):
+                redis.expire(token_id, tiempo_para_expirar)
+                return {"status": "success", "message": "Token renovado correctamente"}
+            else:
+                return {"status": "error", "message": "El token no existe o ya expiró"}
+        except Exception as e:
+            return {"status": "error", "message": f"Error al renovar el token: {str(e)}"}
 
     @staticmethod
     def eliminar_tokenid(token_id):

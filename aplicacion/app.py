@@ -14,7 +14,7 @@ from aplicacion.modelos import *
 from tests.app_tests import Prueba
 from aplicacion.helpers.sesion import Sesion
 from aplicacion.recursos.Gasto import GastoPorMes, GastoResource
-from aplicacion.recursos.GastoMensual import GastoUsuario, GastoMensualResource, GastoDelMes
+from aplicacion.recursos.GastoMensual import GastoMensualUsuario, GastoMensualResource, GastoDelMes
 from aplicacion.recursos.login import Login, LogoutResource, LoginGoogle
 from aplicacion.recursos.Persona import PersonaResource, PersonaIdentificacion
 from aplicacion.recursos.PdfGenerator import GeneratePdf
@@ -41,11 +41,15 @@ def verifica_token():
             es_valido = resultado.get("es_valido")
             if not es_valido:
                 return jsonify({'message' :'Acceso denegado'}), 403
+            else:
+                Sesion.renovar_token(request.headers.get('Authorization'))
 
 
 api.add_resource(GeneratePdf,'/generate_pdf')
 api.add_resource(GastoDelMes,'/gastodelmes/obtener')
 api.add_resource(GastoResource,'/gasto/pagado', '/gasto/agregar', '/gasto/editar', '/gasto/eliminar')
+api.add_resource(GastoMensualResource, '/gasto_mensual/actualizar')
+api.add_resource(GastoMensualUsuario, '/gasto_mensual/obtener')
 api.add_resource(Login, '/login', '/login/validar')
 api.add_resource(LoginGoogle, '/login/google')
 api.add_resource(LogoutResource, '/logout/system')
