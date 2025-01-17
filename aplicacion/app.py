@@ -23,7 +23,7 @@ from aplicacion.recursos.PdfGenerator import GeneratePdf
 app = Flask(__name__)
 CORS(app)
 
-enviroment = "development"
+enviroment = env
 
 app.config.from_object(app_config[enviroment])
 db.init_app(app)

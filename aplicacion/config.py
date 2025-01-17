@@ -7,7 +7,7 @@ class DevelopmentConfig(Config):
     """
     Development configurations
     """
-    SQLALCHEMY_DATABASE_URI = "mysql+pymysql://root:12345678@host.docker.internal:3306/proyecto_devops" #Windows
+    SQLALCHEMY_DATABASE_URI = "mysql+pymysql://root:12345678@host.docker.internal:3306/lista_gastos" #Windows
     #SQLALCHEMY_DATABASE_URI = "mysql+pymysql://robert:Trebor.912@172.17.0.1:3306/lista_gastos" #Ubuntu
     SQLALCHEMY_POOL_RECYCLE = 300
     DEBUG = True
